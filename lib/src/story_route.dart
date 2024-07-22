@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_instagram_storyboard/src/story_button.dart';
+import 'package:flutter_instagram_storyboard/flutter_instagram_storyboard.dart';
 import 'package:flutter_instagram_storyboard/src/story_page_container_builder.dart';
-
-import 'story_page_transform.dart';
 
 class StoryContainerSettings {
   final StoryButtonData buttonData;
@@ -14,19 +12,25 @@ class StoryContainerSettings {
   /// it affects the way a page transition looks
   final IStoryPageTransform? pageTransform;
   final ScrollController storyListScrollController;
+  final double bottomSafeHeight;
+  final StoryTimelineController? storyTimelineController;
+  final Function(int? currentSegmentIndex, int? currentIndex) fingerSwipeUp;
 
   bool safeAreaTop;
   bool safeAreaBottom;
 
   StoryContainerSettings({
+    required this.fingerSwipeUp,
+    required this.bottomSafeHeight,
     required this.buttonData,
     required this.allButtonDatas,
     required this.tapPosition,
     this.curve,
     this.pageTransform,
     required this.storyListScrollController,
-    this.safeAreaTop = true,
-    this.safeAreaBottom = true,
+    this.safeAreaTop = false,
+    this.safeAreaBottom = false,
+    this.storyTimelineController,
   });
 }
 

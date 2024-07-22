@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - native_video_player (1.0.0):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - native_video_player (from `.symlinks/plugins/native_video_player/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  native_video_player:
+    :path: ".symlinks/plugins/native_video_player/ios"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  native_video_player: d12af78a1a4a8cf09775a5177d5b392def6fd23c
+
+PODFILE CHECKSUM: f567b6369f8842e77ccf6611a4baf3e2181f3f05
+
+COCOAPODS: 1.14.3

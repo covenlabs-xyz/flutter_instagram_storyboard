@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_instagram_storyboard/flutter_instagram_storyboard.dart';
+import 'package:flutter_instagram_storyboard/src/first_build_mixin.dart';
 import 'package:flutter_instagram_storyboard/src/set_state_after_frame_mixin.dart';
-import 'package:flutter_instagram_storyboard/src/story_page_transform.dart';
-
-import 'first_build_mixin.dart';
-import 'story_page_container_view.dart';
 
 class StoryButton extends StatefulWidget {
   final StoryButtonData buttonData;
@@ -107,10 +105,8 @@ class _StoryButtonState extends State<StoryButton>
   }
 
   void _onTap() {
-    setState(() {
-      widget.buttonData.markAsWatched();
-    });
     widget.onPressed.call(widget.buttonData);
+    setState(() {});
   }
 
   @override
@@ -120,42 +116,45 @@ class _StoryButtonState extends State<StoryButton>
         AspectRatio(
           aspectRatio: widget.buttonData.aspectRatio,
           child: Container(
-            decoration: widget.buttonData._isWatched
-                ? null
-                : widget.buttonData.borderDecoration,
-            child: Padding(
-              padding: EdgeInsets.all(
-                widget.buttonData.borderOffset,
+            padding: EdgeInsets.all(1),
+            decoration: BoxDecoration(
+              gradient: widget.buttonData.allStoryWatched == true
+                  ? LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFFFFFFFF),
+                        Color(0xFFA073FF),
+                      ],
+                    )
+                  : null,
+              color: widget.buttonData.allStoryWatched == false ? Color(0xFF2C2440) : null,
+              shape: BoxShape.circle,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: widget.buttonData.borderOffset, color: Color(0xFF130A29)),
+                shape: BoxShape.circle,
               ),
-              child: ClipRRect(
-                borderRadius:
-                    widget.buttonData.buttonDecoration.borderRadius?.resolve(
-                          null,
-                        ) ??
-                        const BorderRadius.all(
-                          Radius.circular(12.0),
-                        ),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: widget.buttonData.buttonDecoration,
-                    ),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        splashFactory: widget.buttonData.inkFeatureFactory ??
-                            InkRipple.splashFactory,
-                        onTap: _onTap,
-                        child: const SizedBox(
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    decoration: widget.buttonData.buttonDecoration,
+                  ),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      splashFactory: widget.buttonData.inkFeatureFactory ?? InkRipple.splashFactory,
+                      onTap: _onTap,
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: double.infinity,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -189,13 +188,10 @@ class StoryButtonData {
   /// This affects a border around button
   /// after the story was watched
   /// the border will disappear
-  bool _isWatched = false;
   void markAsWatched() {
-    _isWatched = true;
+    allStoryWatched = false;
     _iWatchMarkable?.markAsWatched();
   }
-
-  int currentSegmentIndex = 0;
 
   IButtonPositionable? _buttonPositionable;
   IWatchMarkable? _iWatchMarkable;
@@ -207,12 +203,15 @@ class StoryButtonData {
   final double aspectRatio;
   final BoxDecoration buttonDecoration;
   final BoxDecoration borderDecoration;
+  final BoxDecoration watchBorderDecoration;
   final double borderOffset;
   final InteractiveInkFeatureFactory? inkFeatureFactory;
   final Widget child;
   final List<Widget> storyPages;
+  final List<Widget>? bottomBar;
+  final List<Widget>? topBar;
   final Widget? closeButton;
-  final Duration segmentDuration;
+  final List<Duration> segmentDuration;
   final BoxDecoration containerBackgroundDecoration;
   final Color timelineFillColor;
   final Color timelineBackgroundColor;
@@ -221,6 +220,11 @@ class StoryButtonData {
   final double timelineSpacing;
   final EdgeInsets? timlinePadding;
   final IsVisibleCallback isVisibleCallback;
+  final Function(int storyIndex)? isWatched;
+  final List<String> backgroundImage;
+  final List<String>? mediaType;
+  bool allStoryWatched;
+  int currentSegmentIndex;
 
   /// Usualy this is required for the final story
   /// to pop it out to its button mosition
@@ -248,11 +252,18 @@ class StoryButtonData {
   /// the button will not appear in button list. It might be necessary
   /// if you need to hide it for some reason
   StoryButtonData({
-    this.storyWatchedContract = StoryWatchedContract.onStoryEnd,
+    this.bottomBar,
+    this.topBar,
+    this.allStoryWatched = false,
+    this.currentSegmentIndex = 0,
+    this.isWatched,
+    required this.backgroundImage,
+    this.mediaType,
+    this.storyWatchedContract = StoryWatchedContract.onSegmentEnd,
     this.storyController,
     this.aspectRatio = 1.0,
-    this.timelineThikness = 2.0,
-    this.timelineSpacing = 8.0,
+    this.timelineThikness = 4,
+    this.timelineSpacing = 11,
     this.timlinePadding,
     this.inkFeatureFactory,
     this.pageAnimationCurve,
@@ -270,25 +281,36 @@ class StoryButtonData {
     ),
     this.buttonDecoration = const BoxDecoration(
       borderRadius: BorderRadius.all(
-        Radius.circular(12.0),
+        Radius.circular(57.0),
       ),
       color: Color.fromARGB(255, 226, 226, 226),
     ),
     this.borderDecoration = const BoxDecoration(
       borderRadius: BorderRadius.all(
-        Radius.circular(15.0),
+        Radius.circular(57.0),
       ),
       border: Border.fromBorderSide(
         BorderSide(
-          color: Color.fromARGB(255, 176, 176, 176),
-          width: 1.5,
+          color: Color(0xFF9530BD),
+          width: 1,
         ),
       ),
     ),
-    this.borderOffset = 2.0,
+    this.watchBorderDecoration = const BoxDecoration(
+      borderRadius: BorderRadius.all(
+        Radius.circular(57),
+      ),
+      border: Border.fromBorderSide(
+        BorderSide(
+          color: Color(0xFFD9D9D9),
+          width: 1,
+        ),
+      ),
+    ),
+    this.borderOffset = 3.0,
   }) : assert(
-          segmentDuration.inMilliseconds % kStoryTimerTickMillis == 0 &&
-              segmentDuration.inMilliseconds >= 1000,
+          segmentDuration[currentSegmentIndex].inMilliseconds % kStoryTimerTickMillis == 0 &&
+              segmentDuration[currentSegmentIndex].inMilliseconds >= 1000,
           'Segment duration in milliseconds must be a multiple of $kStoryTimerTickMillis and not less than 1000 milliseconds',
         );
 }
