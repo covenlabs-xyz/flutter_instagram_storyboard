@@ -36,7 +36,8 @@ class StoryPageContainerView extends StatefulWidget {
   State<StoryPageContainerView> createState() => _StoryPageContainerViewState();
 }
 
-class _StoryPageContainerViewState extends State<StoryPageContainerView> with FirstBuildMixin {
+class _StoryPageContainerViewState extends State<StoryPageContainerView>
+    with FirstBuildMixin {
   late StoryTimelineController _storyController;
   final Stopwatch _stopwatch = Stopwatch();
   Offset _pointerDownPosition = Offset.zero;
@@ -47,7 +48,8 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
 
   @override
   void initState() {
-    _storyController = widget.buttonData.storyController ?? StoryTimelineController();
+    _storyController =
+        widget.buttonData.storyController ?? StoryTimelineController();
     _stopwatch.start();
     _storyController.addListener(_onTimelineEvent);
     super.initState();
@@ -160,7 +162,9 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
       physics: NeverScrollableScrollPhysics(),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top - widget.bottomSafeHeight,
+        height: MediaQuery.of(context).size.height -
+            MediaQuery.of(context).viewPadding.top -
+            widget.bottomSafeHeight,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Colors.black,
@@ -182,16 +186,19 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
                             await Future.delayed(kThemeAnimationDuration);
                           }
                           nativeVideoPlayerController = controller;
-                          _storyController._state?.nativeVideoPlayerController = nativeVideoPlayerController;
+                          _storyController._state?.nativeVideoPlayerController =
+                              nativeVideoPlayerController;
                           await nativeVideoPlayerController?.setVolume(1);
                           nativeVideoPlayerController?.play();
                           await loadVideoSource();
                         },
                       ),
+                      widget.buttonData.storyPages[_curSegmentIndex],
                     ],
                   );
                 });
-              } else if (widget.buttonData.mediaType?[_curSegmentIndex] == "IMAGE") {
+              } else if (widget.buttonData.mediaType?[_curSegmentIndex] ==
+                  "IMAGE") {
                 return CachedNetworkImage(
                   errorWidget: (context, url, error) => Container(
                     width: double.infinity,
@@ -216,7 +223,8 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
                           height: double.infinity,
                           decoration: BoxDecoration(
                             color: Colors.black,
-                            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                            image: DecorationImage(
+                                image: imageProvider, fit: BoxFit.cover),
                           ),
                         ),
                         widget.buttonData.storyPages[_curSegmentIndex],
@@ -261,7 +269,10 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
       left: 0,
       right: 0,
       bottom: 0,
-      child: (widget.buttonData.bottomBar != null && widget.buttonData.bottomBar!.isNotEmpty) ? widget.buttonData.bottomBar![_curSegmentIndex] : SizedBox(height: widget.bottomSafeHeight),
+      child: (widget.buttonData.bottomBar != null &&
+              widget.buttonData.bottomBar!.isNotEmpty)
+          ? widget.buttonData.bottomBar![_curSegmentIndex]
+          : SizedBox(height: widget.bottomSafeHeight),
     );
   }
 
@@ -293,7 +304,8 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
                   _pointerDownMillis = _stopwatch.elapsedMilliseconds;
                   _pointerDownPosition = event.position;
                   _storyController.pause();
-                  if (widget.buttonData.mediaType?[_curSegmentIndex] == 'VIDEO') _storyController._state?.videoPause();
+                  if (widget.buttonData.mediaType?[_curSegmentIndex] == 'VIDEO')
+                    _storyController._state?.videoPause();
                 },
                 onPointerUp: (PointerUpEvent event) {
                   if (_offsetY > MediaQuery.of(context).size.height * 0.1) {
@@ -307,7 +319,9 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
                   final pointerUpMillis = _stopwatch.elapsedMilliseconds;
                   final maxPressMillis = kPressTimeout.inMilliseconds * 2;
                   final diffMillis = pointerUpMillis - _pointerDownMillis;
-                  if (diffMillis <= maxPressMillis && event.position.dy > (MediaQuery.of(context).padding.top + 70)) {
+                  if (diffMillis <= maxPressMillis &&
+                      event.position.dy >
+                          (MediaQuery.of(context).padding.top + 70)) {
                     final position = event.position;
                     final distance = (position - _pointerDownPosition).distance;
                     if (distance < 5.0) {
@@ -321,7 +335,8 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
                   }
                   if (_offsetY < MediaQuery.of(context).size.height * 0.1) {
                     _storyController.unpause();
-                    if (widget.buttonData.mediaType?[_curSegmentIndex] == 'VIDEO') _storyController._state?.videoPlay();
+                    if (widget.buttonData.mediaType?[_curSegmentIndex] ==
+                        'VIDEO') _storyController._state?.videoPlay();
                   }
                 },
                 onPointerMove: (PointerMoveEvent event) {
@@ -332,7 +347,8 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView> with Fi
                   } else if (event.delta.dy < -10 && event.delta.dx == 0) {
                     widget.fingerSwipeUp(_curSegmentIndex, widget.currentIndex);
                     _storyController.pause();
-                    if (widget.buttonData.mediaType?[_curSegmentIndex] == 'VIDEO') _storyController._state?.videoPause();
+                    if (widget.buttonData.mediaType?[_curSegmentIndex] ==
+                        'VIDEO') _storyController._state?.videoPause();
                   }
                 },
                 child: _buildPageContent(),
@@ -409,7 +425,8 @@ typedef StoryTimelineCallback = Function(StoryTimelineEvent);
 class StoryTimelineController {
   _StoryTimelineState? _state;
 
-  final HashSet<StoryTimelineCallback> _listeners = HashSet<StoryTimelineCallback>();
+  final HashSet<StoryTimelineCallback> _listeners =
+      HashSet<StoryTimelineCallback>();
 
   void addListener(StoryTimelineCallback callback) {
     _listeners.add(callback);
@@ -537,7 +554,8 @@ class _StoryTimelineState extends State<StoryTimeline> {
   void initState() {
     super.initState();
 
-    _maxAccumulator = widget.buttonData.segmentDuration[_curSegmentIndex].inMilliseconds;
+    _maxAccumulator =
+        widget.buttonData.segmentDuration[_curSegmentIndex].inMilliseconds;
     _timer = Timer.periodic(
       const Duration(
         milliseconds: kStoryTimerTickMillis,
@@ -559,12 +577,14 @@ class _StoryTimelineState extends State<StoryTimeline> {
       _accumulatedTime += kStoryTimerTickMillis;
       if (_accumulatedTime >= _maxAccumulator) {
         if (_isLastSegment) {
-          _maxAccumulator = widget.buttonData.segmentDuration[_curSegmentIndex].inMilliseconds;
+          _maxAccumulator = widget
+              .buttonData.segmentDuration[_curSegmentIndex].inMilliseconds;
           _onStoryComplete();
         } else {
           _accumulatedTime = 0;
           _curSegmentIndex++;
-          _maxAccumulator = widget.buttonData.segmentDuration[_curSegmentIndex].inMilliseconds;
+          _maxAccumulator = widget
+              .buttonData.segmentDuration[_curSegmentIndex].inMilliseconds;
           _onSegmentComplete();
         }
       }
@@ -578,7 +598,8 @@ class _StoryTimelineState extends State<StoryTimeline> {
   }
 
   void _onSegmentComplete() async {
-    if (widget.buttonData.storyWatchedContract == StoryWatchedContract.onSegmentEnd) {
+    if (widget.buttonData.storyWatchedContract ==
+        StoryWatchedContract.onSegmentEnd) {
       widget.buttonData.isWatched?.call(_curSegmentIndex);
     }
 
@@ -711,10 +732,13 @@ class _StoryTimelineState extends State<StoryTimeline> {
       child: CustomPaint(
         painter: _TimelinePainter(
           fillColor: widget.buttonData.timelineFillColor.withOpacity(0.5),
-          backgroundColor: widget.buttonData.timelineBackgroundColor.withOpacity(0.3),
+          backgroundColor:
+              widget.buttonData.timelineBackgroundColor.withOpacity(0.3),
           curSegmentIndex: _curSegmentIndex,
           numSegments: _numSegments,
-          percent: _accumulatedTime > kStoryTimerTickMillis ? _accumulatedTime / _maxAccumulator : 0,
+          percent: _accumulatedTime > kStoryTimerTickMillis
+              ? _accumulatedTime / _maxAccumulator
+              : 0,
           spacing: widget.buttonData.timelineSpacing,
           thikness: widget.buttonData.timelineThikness,
         ),
