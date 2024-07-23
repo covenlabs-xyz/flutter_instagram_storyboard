@@ -178,20 +178,28 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
                   if (_offsetY == 0.0) _storyController.unpause();
 
                   return Stack(
-                    alignment: Alignment.bottomCenter,
+                    alignment: Alignment.center,
                     children: [
-                      NativeVideoPlayerView(
-                        onViewReady: (controller) async {
-                          if (nativeVideoPlayerController == null) {
-                            await Future.delayed(kThemeAnimationDuration);
-                          }
-                          nativeVideoPlayerController = controller;
-                          _storyController._state?.nativeVideoPlayerController =
-                              nativeVideoPlayerController;
-                          await nativeVideoPlayerController?.setVolume(1);
-                          nativeVideoPlayerController?.play();
-                          await loadVideoSource();
-                        },
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                        ),
+                        child: Center(
+                          child: NativeVideoPlayerView(
+                            onViewReady: (controller) async {
+                              if (nativeVideoPlayerController == null) {
+                                await Future.delayed(kThemeAnimationDuration);
+                              }
+                              nativeVideoPlayerController = controller;
+                              _storyController
+                                      ._state?.nativeVideoPlayerController =
+                                  nativeVideoPlayerController;
+                              await nativeVideoPlayerController?.setVolume(1);
+                              nativeVideoPlayerController?.play();
+                              await loadVideoSource();
+                            },
+                          ),
+                        ),
                       ),
                       widget.buttonData.storyPages[_curSegmentIndex],
                     ],
