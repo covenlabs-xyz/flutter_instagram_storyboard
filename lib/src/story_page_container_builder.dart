@@ -14,10 +14,12 @@ class StoryPageContainerBuilder extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StoryPageContainerBuilder> createState() => _StoryPageContainerBuilderState();
+  State<StoryPageContainerBuilder> createState() =>
+      _StoryPageContainerBuilderState();
 }
 
-class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> with SetStateAfterFrame, FirstBuildMixin {
+class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder>
+    with SetStateAfterFrame, FirstBuildMixin {
   late PageController _pageController;
   late IStoryPageTransform _storyPageTransform;
   static const double kMaxPageOverscroll = .2;
@@ -31,7 +33,8 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
 
   @override
   void initState() {
-    _storyPageTransform = widget.settings.pageTransform ?? const StoryPage3DTransform();
+    _storyPageTransform =
+        widget.settings.pageTransform ?? const StoryPage3DTransform();
     _currentPage = widget.settings.allButtonDatas.indexOf(
       widget.settings.buttonData,
     );
@@ -44,7 +47,8 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
         lateCurrentIndex = _curPageIndex;
         _pageDelta = _pageController.page! - _currentPage;
         final isFirst = _currentPage == 0;
-        final isLast = _currentPage == widget.settings.allButtonDatas.length - 1;
+        final isLast =
+            _currentPage == widget.settings.allButtonDatas.length - 1;
         if (isFirst) {
           final offset = _pageController.offset;
           if (offset < 0) {
@@ -91,7 +95,8 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
       final rightPos = _activeButtonData?.buttonRightPosition?.dx;
       const additionalMargin = 12.0;
       if (leftPos != null && rightPos != null) {
-        final curScrollPosition = widget.settings.storyListScrollController.position.pixels;
+        final curScrollPosition =
+            widget.settings.storyListScrollController.position.pixels;
 
         if (leftPos < 0.0) {
           widget.settings.storyListScrollController.jumpTo(
@@ -152,7 +157,8 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
 
       if (delete) {
         if (widget.settings.allButtonDatas.length - 1 == _curPageIndex) {
-          updateActiveButton = widget.settings.allButtonDatas[_curPageIndex - (_curPageIndex == 0 ? 0 : 1)];
+          updateActiveButton = widget.settings
+              .allButtonDatas[_curPageIndex - (_curPageIndex == 0 ? 0 : 1)];
           widget.settings.allButtonDatas.removeAt(_curPageIndex);
         }
       }
@@ -160,10 +166,13 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
     }
   }
 
-  int get _curPageIndex => !_pageController.hasClients ? _currentPage : _pageController.page?.floor() ?? 0;
+  int get _curPageIndex => !_pageController.hasClients
+      ? _currentPage
+      : _pageController.page?.floor() ?? 0;
 
   StoryButtonData? _activeButtonData;
-  StoryButtonData get activeButtonData => widget.settings.allButtonDatas[_curPageIndex];
+  StoryButtonData get activeButtonData =>
+      widget.settings.allButtonDatas[_curPageIndex];
   set updateActiveButton(StoryButtonData? value) => _activeButtonData = value;
 
   @override
@@ -206,15 +215,21 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
                     null,
                   )
                   .bottomLeft,
-              startX: _activeButtonData?.buttonCenterPosition?.dx ?? widget.settings.tapPosition.dx,
-              startY: _activeButtonData?.buttonCenterPosition?.dy ?? widget.settings.tapPosition.dy,
+              startX: _activeButtonData?.buttonCenterPosition?.dx ??
+                  widget.settings.tapPosition.dx,
+              startY: _activeButtonData?.buttonCenterPosition?.dy ??
+                  widget.settings.tapPosition.dy,
               animationValue: animationValue,
             ),
             child: Scaffold(
               backgroundColor: Colors.transparent,
               body: Container(
-                decoration: widget.settings.buttonData.containerBackgroundDecoration.copyWith(
-                  color: widget.settings.buttonData.containerBackgroundDecoration.color?.withOpacity(
+                decoration: widget
+                    .settings.buttonData.containerBackgroundDecoration
+                    .copyWith(
+                  color: widget
+                      .settings.buttonData.containerBackgroundDecoration.color
+                      ?.withOpacity(
                     bgOpacity,
                   ),
                 ),
@@ -225,7 +240,8 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
                     physics: _storyPageTransform.pageScrollPhysics,
                     controller: _pageController,
                     onPageChanged: (value) async {
-                      if (widget.settings.buttonData.currentSegmentIndex == (widget.settings.buttonData.storyPages.length - 1)) {
+                      if (widget.settings.buttonData.currentSegmentIndex ==
+                          (widget.settings.buttonData.storyPages.length - 1)) {
                         widget.settings.buttonData.markAsWatched();
                       }
                       // widget.settings.buttonData.storyController?.videoDispose();
@@ -237,17 +253,22 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder> w
                     },
                     itemBuilder: ((context, index) {
                       final childIndex = index % itemCount;
-                      final buttonData = widget.settings.allButtonDatas[childIndex];
+                      final buttonData =
+                          widget.settings.allButtonDatas[childIndex];
                       final child = StoryPageContainerView(
                         buttonData: buttonData,
                         onClosePressed: _close,
                         pageController: _pageController,
-                        onStoryComplete: (bool delete) => _onStoryComplete(delete),
+                        onStoryComplete: (bool delete) =>
+                            _onStoryComplete(delete),
                         bottomSafeHeight: widget.settings.bottomSafeHeight,
-                        storyTimelineController: widget.settings.storyTimelineController,
+                        storyTimelineController:
+                            widget.settings.storyTimelineController,
                         allButtonDatas: widget.settings.allButtonDatas,
                         currentIndex: lateCurrentIndex,
-                        fingerSwipeUp: (currentSegmentIndex, currentIndex) => widget.settings.fingerSwipeUp(currentSegmentIndex, currentIndex),
+                        fingerSwipeUp: (currentSegmentIndex, currentIndex) =>
+                            widget.settings.fingerSwipeUp(
+                                currentSegmentIndex, currentIndex),
                       );
                       return _storyPageTransform.transform(
                         context,

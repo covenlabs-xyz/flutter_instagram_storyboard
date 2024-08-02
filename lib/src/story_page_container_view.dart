@@ -195,7 +195,9 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
                                       ._state?.nativeVideoPlayerController =
                                   nativeVideoPlayerController;
                               await nativeVideoPlayerController?.setVolume(1);
-                              nativeVideoPlayerController?.play();
+                              if (_timelineAvailable) {
+                                nativeVideoPlayerController?.play();
+                              }
                               await loadVideoSource();
                             },
                           ),
@@ -312,8 +314,10 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
                   _pointerDownMillis = _stopwatch.elapsedMilliseconds;
                   _pointerDownPosition = event.position;
                   _storyController.pause();
-                  if (widget.buttonData.mediaType?[_curSegmentIndex] == 'VIDEO')
+                  if (widget.buttonData.mediaType?[_curSegmentIndex] ==
+                      'VIDEO') {
                     _storyController._state?.videoPause();
+                  }
                 },
                 onPointerUp: (PointerUpEvent event) {
                   if (_offsetY > MediaQuery.of(context).size.height * 0.1) {
@@ -344,7 +348,9 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
                   if (_offsetY < MediaQuery.of(context).size.height * 0.1) {
                     _storyController.unpause();
                     if (widget.buttonData.mediaType?[_curSegmentIndex] ==
-                        'VIDEO') _storyController._state?.videoPlay();
+                        'VIDEO') {
+                      _storyController._state?.videoPlay();
+                    }
                   }
                 },
                 onPointerMove: (PointerMoveEvent event) {
@@ -353,10 +359,10 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
                       _offsetY += event.delta.dy;
                     });
                   } else if (event.delta.dy < -10 && event.delta.dx == 0) {
-                    widget.fingerSwipeUp(_curSegmentIndex, widget.currentIndex);
-                    _storyController.pause();
-                    if (widget.buttonData.mediaType?[_curSegmentIndex] ==
-                        'VIDEO') _storyController._state?.videoPause();
+                    if (_offsetY == 0.0) {
+                      widget.fingerSwipeUp(
+                          _curSegmentIndex, widget.currentIndex);
+                    }
                   }
                 },
                 child: _buildPageContent(),
@@ -386,15 +392,15 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
       await nativeVideoPlayerController?.loadVideoSource(videoSource);
 
       nativeVideoPlayerController?.onPlaybackReady.addListener(() {
-        nativeVideoPlayerController?.play();
+        if (_timelineAvailable) {
+          nativeVideoPlayerController?.play();
+        }
       });
 
       nativeVideoPlayerController?.onPlaybackEnded.addListener(() {
         nativeVideoPlayerController?.stop();
       });
-    } catch (e) {
-      debugPrint('Düzenleme ekranını açarken bir hata oluştu $e');
-    }
+    } catch (e) {}
   }
 
   @override
@@ -581,6 +587,11 @@ class _StoryTimelineState extends State<StoryTimeline> {
     if (_isPaused || !_isTimelineAvailable || _isKeyboardOpened) {
       return;
     }
+
+    if (_accumulatedTime < kStoryTimerTickMillis) {
+      videoPlay();
+    }
+
     if (_accumulatedTime + kStoryTimerTickMillis <= _maxAccumulator) {
       _accumulatedTime += kStoryTimerTickMillis;
       if (_accumulatedTime >= _maxAccumulator) {
