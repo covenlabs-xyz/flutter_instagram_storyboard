@@ -341,7 +341,8 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
                       if (isLeft) {
                         _storyController.previousSegment();
                       } else {
-                        _storyController.nextSegment();
+                        _storyController
+                            .nextSegment(_storyController.isLastSegment());
                       }
                     }
                   }
@@ -464,6 +465,8 @@ class StoryTimelineController {
     }
   }
 
+  bool? isLastSegment() => _state?._isLastSegment;
+
   int currentIndex() => _state?.currentIndex() ?? 0;
   int currentSegmentIndex() => _state?.currentSegmentIndex() ?? 0;
 
@@ -474,7 +477,7 @@ class StoryTimelineController {
         _state?.deleteStory();
       } else {
         _state?.deleteSegment();
-        _state?.nextSegment();
+        _state?.nextSegment(_state?._curSegmentIndex == _state?._numSegments);
       }
     } else {
       _state?.deleteSegment();
@@ -490,8 +493,8 @@ class StoryTimelineController {
     _state?.nextStory();
   }
 
-  void nextSegment() {
-    _state?.nextSegment();
+  void nextSegment(bool? isLastSegment) {
+    _state?.nextSegment(isLastSegment);
   }
 
   void previousSegment() {
@@ -671,11 +674,11 @@ class _StoryTimelineState extends State<StoryTimeline> {
     }
   }
 
-  void nextSegment() {
+  void nextSegment(bool? isLastSegment) {
     if (_isKeyboardOpened) {
       FocusManager.instance.primaryFocus?.unfocus();
     } else {
-      if (_isLastSegment) {
+      if (isLastSegment == true) {
         _accumulatedTime = _maxAccumulator;
         _onStoryComplete();
       } else {
