@@ -66,7 +66,8 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
   void initState() {
     super.initState();
 
-    storyTimelineController.addAll(List.filled(storyList.length, StoryTimelineController()));
+    storyTimelineController
+        .addAll(List.filled(storyList.length, StoryTimelineController()));
     _generateStoryButtonDataList();
   }
 
@@ -87,8 +88,10 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
             listHeight: 100,
             paddingTop: 16,
             newStoryOnTap: () => print('new story'),
-            fingerSwipeUp: (currentSegmentIndex, currentIndex) => currentIndex == 0
-                ? print('fingerSwipeUp -> segmentIndex:$currentSegmentIndex, currentIndex:$currentIndex')
+            fingerSwipeUp: (currentSegmentIndex, currentIndex) => currentIndex ==
+                    0
+                ? print(
+                    'fingerSwipeUp -> segmentIndex:$currentSegmentIndex, currentIndex:$currentIndex')
                 : null,
             newStoryTitle: Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -132,10 +135,13 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
           buttonDecoration: _buildButtonDecoration(storyList[0]),
           child: _buildButtonChild('user $i'),
           storyPages: [
-            ...segmentList
-                .map((e) => _createDummyPage(text: '$i Want to buy a new car? Get our loan for the rest of your life!'))
+            ...segmentList.map((e) => _createDummyPage(
+                text:
+                    '$i Want to buy a new car? Get our loan for the rest of your life!'))
           ],
-          bottomBar: [...segmentList.map((e) => _buildMessageBar(activeIndex: i))],
+          bottomBar: [
+            ...segmentList.map((e) => _buildMessageBar(activeIndex: i))
+          ],
           topBar: [
             ...segmentList.map(
               (e) => Stack(
@@ -145,7 +151,8 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                     top: 36,
                     child: InkWell(
                       onTap: () {
-                        final currentIndex = storyTimelineController[0].currentIndex();
+                        final currentIndex =
+                            storyTimelineController[0].currentIndex();
                         storyTimelineController[currentIndex].deleteStory();
                         storyTimelineController.removeAt(currentIndex);
                         storyList.removeAt(currentIndex);
@@ -180,7 +187,9 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
         alignment: Alignment.center,
         children: [
           Positioned(
-            child: Text(text, style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
+            child: Text(text,
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center),
           ),
         ],
       ),
@@ -229,7 +238,8 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                     ),
                     Positioned(
                       right: 0,
-                      child: Text('Send', style: TextStyle(color: Colors.white)),
+                      child:
+                          Text('Send', style: TextStyle(color: Colors.white)),
                     )
                   ],
                 ),
@@ -245,11 +255,13 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
               ),
               InkWell(
                 onTap: () {
-                  storyTimelineController[activeIndex].deleteSegment(context, segmentList.length);
+                  storyTimelineController[activeIndex]
+                      .deleteSegment(segmentList.length);
                   segmentList.removeAt(activeIndex);
 
                   if ((segmentList.length - 1) == 0) {
-                    final currentIndex = storyTimelineController[0].currentIndex();
+                    final currentIndex =
+                        storyTimelineController[0].currentIndex();
                     storyTimelineController[currentIndex].deleteStory();
                     storyTimelineController.removeAt(currentIndex);
                     storyList.removeAt(currentIndex);

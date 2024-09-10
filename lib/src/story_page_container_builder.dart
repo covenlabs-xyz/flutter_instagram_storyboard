@@ -121,18 +121,12 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder>
       _isClosed = true;
       safeSetState(() {});
       if (mounted) {
-        Navigator.of(context).pop(
-          widget.settings.buttonData,
-        );
+        Navigator.of(context).pop(true);
       }
     }
   }
 
   void _afterFirstBuild() async {
-    // if (widget.settings.buttonData.mediaType?[widget.settings.buttonData.currentSegmentIndex] == 'VIDEO' && mounted) {
-    //   await widget.settings.buttonData.storyController?.videoInit(null);
-    //   setState(() {});
-    // }
     if (mounted) {
       _pageWidth = context.size!.width;
       _totalWidth = _pageWidth * (widget.settings.allButtonDatas.length - 1);
@@ -144,7 +138,7 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder>
     if (_curPageIndex < widget.settings.allButtonDatas.length - 1) {
       if (delete) {
         widget.settings.allButtonDatas.removeAt(_curPageIndex);
-        setState(() {});
+        // setState(() {});
       } else {
         _pageController.animateToPage(
           _curPageIndex + 1,
@@ -162,7 +156,7 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder>
           widget.settings.allButtonDatas.removeAt(_curPageIndex);
         }
       }
-      setState(() {});
+      // setState(() {});
     }
   }
 

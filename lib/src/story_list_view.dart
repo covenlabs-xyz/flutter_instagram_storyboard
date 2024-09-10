@@ -50,28 +50,43 @@ class StoryListView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StoryListView> createState() => _StoryListViewState();
+  State<StoryListView> createState() => StoryListViewState();
 }
 
-class _StoryListViewState extends State<StoryListView> {
+class StoryListViewState extends State<StoryListView> {
   @override
   void initState() {
     super.initState();
   }
 
-  void _onButtonPressed(StoryButtonData buttonData) {
+  void onButtonPressed(StoryButtonData buttonData) {
+    while (buttonData.currentSegmentIndex >= buttonData.storyPages.length) {
+      buttonData.currentSegmentIndex--;
+
+      if (buttonData.currentSegmentIndex < 0) {
+        buttonData.currentSegmentIndex = 0;
+        return;
+      }
+    }
+
     Navigator.of(context).push(
       StoryRoute(
         storyContainerSettings: StoryContainerSettings(
           buttonData: buttonData,
-          tapPosition: buttonData.buttonCenterPosition!,
+          tapPosition: buttonData.buttonCenterPosition ??
+              Offset(
+                MediaQuery.of(context).size.width / 2,
+                MediaQuery.of(context).size.height / 2,
+              ),
           curve: buttonData.pageAnimationCurve,
           allButtonDatas: widget.buttonDatas,
           pageTransform: widget.pageTransform,
           storyListScrollController: widget.scrollController,
           bottomSafeHeight: widget.bottomSafeHeight,
           fingerSwipeUp: (currentSegmentIndex, currentIndex) =>
-              widget.fingerSwipeUp != null ? widget.fingerSwipeUp!(currentSegmentIndex, currentIndex) : null,
+              widget.fingerSwipeUp != null
+                  ? widget.fingerSwipeUp!(currentSegmentIndex, currentIndex)
+                  : null,
         ),
         duration: buttonData.pageAnimationDuration,
       ),
@@ -151,7 +166,8 @@ class _StoryListViewState extends State<StoryListView> {
           itemBuilder: (c, int index) {
             final isLast = index == buttonDatas.length - 1;
             final isFirst = index == 0;
-            if (index < buttonDatas.length + (widget.newStoryOnTap != null ? 1 : 0)) {
+            if (index <
+                buttonDatas.length + (widget.newStoryOnTap != null ? 1 : 0)) {
               if (isFirst && widget.newStoryOnTap != null) {
                 return Padding(
                   padding: EdgeInsets.only(
@@ -169,14 +185,16 @@ class _StoryListViewState extends State<StoryListView> {
                                 ? widget.newStoryIcon
                                 : Icon(Icons.add_a_photo_outlined, size: 24),
                           ),
-                          if (widget.newStoryTitle != null) widget.newStoryTitle!
+                          if (widget.newStoryTitle != null)
+                            widget.newStoryTitle!
                         ],
                       ),
                     ),
                   ),
                 );
               } else {
-                final buttonData = buttonDatas[index - (widget.newStoryOnTap != null ? 1 : 0)];
+                final buttonData =
+                    buttonDatas[index - (widget.newStoryOnTap != null ? 1 : 0)];
 
                 return Padding(
                   padding: EdgeInsets.only(
@@ -190,7 +208,7 @@ class _StoryListViewState extends State<StoryListView> {
                       allButtonDatas: buttonDatas,
                       pageTransform: widget.pageTransform,
                       storyListViewController: widget.scrollController,
-                      onPressed: _onButtonPressed,
+                      onPressed: onButtonPressed,
                     ),
                   ),
                 );
@@ -216,7 +234,8 @@ class _StoryListViewState extends State<StoryListView> {
                   : SizedBox();
             }
           },
-          itemCount: buttonDatas.length + (widget.newStoryOnTap != null ? 2 : 1),
+          itemCount:
+              buttonDatas.length + (widget.newStoryOnTap != null ? 2 : 1),
         ),
       ),
     );

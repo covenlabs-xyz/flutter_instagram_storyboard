@@ -470,10 +470,9 @@ class StoryTimelineController {
   int currentIndex() => _state?.currentIndex() ?? 0;
   int currentSegmentIndex() => _state?.currentSegmentIndex() ?? 0;
 
-  void deleteSegment(BuildContext context, int segmentCount) {
+  void deleteSegment(int segmentCount) {
     if (_state?._curSegmentIndex == 0) {
       if (segmentCount == 0) {
-        Navigator.pop(context, true);
         _state?.deleteStory();
       } else {
         _state?.deleteSegment();
@@ -656,9 +655,9 @@ class _StoryTimelineState extends State<StoryTimeline> {
     if (_isKeyboardOpened) {
       FocusManager.instance.primaryFocus?.unfocus();
     } else {
-      widget.buttonData.storyPages.removeAt(_curSegmentIndex);
+      // widget.buttonData.storyPages.removeAt(_curSegmentIndex);
     }
-    setState(() {});
+    // setState(() {});
   }
 
   void deleteStory() {
