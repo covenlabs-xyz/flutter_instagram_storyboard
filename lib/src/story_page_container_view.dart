@@ -474,6 +474,7 @@ class StoryTimelineController {
     if (_state?._curSegmentIndex == 0) {
       if (segmentCount == 0) {
         _state?.deleteStory();
+        _state?.nextStory();
       } else {
         _state?.deleteSegment();
         _state?.nextSegment(_state?._curSegmentIndex == _state?._numSegments);
