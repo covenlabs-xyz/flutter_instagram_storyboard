@@ -190,15 +190,17 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
                               if (nativeVideoPlayerController == null) {
                                 await Future.delayed(kThemeAnimationDuration);
                               }
-                              nativeVideoPlayerController = controller;
-                              _storyController
-                                      ._state?.nativeVideoPlayerController =
-                                  nativeVideoPlayerController;
-                              await nativeVideoPlayerController?.setVolume(1);
-                              if (_timelineAvailable) {
-                                nativeVideoPlayerController?.play();
+                              if (mounted) {
+                                nativeVideoPlayerController = controller;
+                                _storyController
+                                        ._state?.nativeVideoPlayerController =
+                                    nativeVideoPlayerController;
+                                await nativeVideoPlayerController?.setVolume(1);
+                                if (_timelineAvailable) {
+                                  nativeVideoPlayerController?.play();
+                                }
+                                await loadVideoSource();
                               }
-                              await loadVideoSource();
                             },
                           ),
                         ),
@@ -385,6 +387,7 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
   }
 
   Future<void> loadVideoSource() async {
+    if (!context.mounted) return;
     try {
       final videoSource = await VideoSource.init(
         type: VideoSourceType.network,
@@ -409,7 +412,6 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
     widget.pageController?.removeListener(_onPageControllerUpdate);
     _stopwatch.stop();
     _storyController.removeListener(_onTimelineEvent);
-    // player.dispose();
 
     super.dispose();
   }
@@ -471,7 +473,8 @@ class StoryTimelineController {
   int currentSegmentIndex() => _state?.currentSegmentIndex() ?? 0;
 
   void deleteSegment(int segmentCount) {
-    if (_state?._curSegmentIndex == 0) {
+    if (_state == null) return;
+    if ((_state?._curSegmentIndex ?? 0) == 0) {
       if (segmentCount == 0) {
         _state?.deleteStory();
         _state?.nextStory();
@@ -743,6 +746,7 @@ class _StoryTimelineState extends State<StoryTimeline> {
   @override
   void dispose() {
     _timer.cancel();
+    videoDispose();
     super.dispose();
   }
 

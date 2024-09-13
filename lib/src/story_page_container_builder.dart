@@ -238,11 +238,6 @@ class _StoryPageContainerBuilderState extends State<StoryPageContainerBuilder>
                           (widget.settings.buttonData.storyPages.length - 1)) {
                         widget.settings.buttonData.markAsWatched();
                       }
-                      // widget.settings.buttonData.storyController?.videoDispose();
-
-                      // if (widget.settings.buttonData.mediaType?[lateCurrentIndex] == 'VIDEO' && mounted) {
-                      //   await widget.settings.buttonData.storyController?.videoInit(null);
-                      // }
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                     itemBuilder: ((context, index) {
